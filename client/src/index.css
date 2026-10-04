@@ -1,0 +1,39 @@
+@import '@fontsource-variable/manrope';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-bg: #F4F5FB;
+  --color-surface: #FFFFFF;
+  --color-line: #E2E5F1;
+  --color-ink: #12142B;
+  --color-muted: #626A8A;
+  --color-brand: #4F46E5;
+  --color-brand-strong: #4338CA;
+  --color-brand-soft: #EEF0FF;
+  --color-brand-text: #4338CA;
+  --color-star: #F59E0B;
+  --color-danger: #DC2626;
+}
+
+html.dark {
+  --color-bg: #0B0E19;
+  --color-surface: #131727;
+  --color-line: #232842;
+  --color-ink: #E8EAF6;
+  --color-muted: #9AA1C2;
+  --color-brand: #4F46E5;
+  --color-brand-strong: #6366F1;
+  --color-brand-soft: #1C2142;
+  --color-brand-text: #A5B4FC;
+  --color-star: #FBBF24;
+  --color-danger: #F87171;
+}
+
+@layer base {
+  body {
+    font-family: 'Manrope Variable', sans-serif;
+  }
+}
