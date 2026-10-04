@@ -12,6 +12,8 @@ import { contentTypeCheck } from './shared/middleware/contentTypeCheck.js';
 import { notFound } from './shared/middleware/notFound.js';
 import { errorHandler } from './shared/middleware/errorHandler.js';
 
+import authRoutes from './modules/auth/auth.routes.js';
+
 export const createApp = () => {
   const app = express();
 
@@ -73,6 +75,8 @@ export const createApp = () => {
   app.get('/api/ready', (req, res) => {
     res.json({ status: 'ok', ready: true });
   });
+
+  app.use('/api/auth', authRoutes);
 
   app.use('/api', notFound);
   app.use(errorHandler);
