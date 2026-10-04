@@ -3,6 +3,7 @@ import helmet from 'helmet';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import pinoHttp from 'pino-http';
+import swaggerUi from 'swagger-ui-express';
 import { env } from './config/env.js';
 import { logger } from './shared/utils/logger.js';
 import { requestId } from './shared/middleware/requestId.js';
@@ -11,6 +12,7 @@ import { originCheck } from './shared/middleware/originCheck.js';
 import { contentTypeCheck } from './shared/middleware/contentTypeCheck.js';
 import { notFound } from './shared/middleware/notFound.js';
 import { errorHandler } from './shared/middleware/errorHandler.js';
+import { generateOpenApiSpec } from './docs/openapi.js';
 
 import authRoutes from './modules/auth/auth.routes.js';
 import profileRoutes from './modules/profile/profile.routes.js';
@@ -30,7 +32,10 @@ export const createApp = () => {
     pinoHttp({
       logger,
       autoLogging: {
-        ignore: (req) => req.url === '/api/health' || req.url === '/api/ready',
+        ignore: (req) =>
+          req.url === '/api/health' ||
+          req.url === '/api/ready' ||
+          req.url.startsWith('/api/docs'),
       },
     })
   );
@@ -80,6 +85,12 @@ export const createApp = () => {
   app.get('/api/ready', (req, res) => {
     res.json({ status: 'ok', ready: true });
   });
+
+  if (env.ENABLE_DOCS || env.NODE_ENV === 'development') {
+    const openApiDoc = generateOpenApiSpec();
+    app.get('/api/docs.json', (req, res) => res.json(openApiDoc));
+    app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(openApiDoc));
+  }
 
   app.use('/api/auth', authRoutes);
   app.use('/api/profile', profileRoutes);
