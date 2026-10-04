@@ -15,7 +15,7 @@ export const addressSchema = z
 export const emailSchema = z
   .string()
   .trim()
-  .lowercase()
+  .toLowerCase()
   .email('Invalid email address');
 
 export const passwordSchema = z
