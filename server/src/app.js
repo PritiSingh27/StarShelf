@@ -15,6 +15,7 @@ import { errorHandler } from './shared/middleware/errorHandler.js';
 import authRoutes from './modules/auth/auth.routes.js';
 import adminRoutes from './modules/admin/admin.routes.js';
 import categoriesRoutes from './modules/categories/categories.routes.js';
+import storesRoutes from './modules/stores/stores.routes.js';
 
 export const createApp = () => {
   const app = express();
@@ -80,6 +81,7 @@ export const createApp = () => {
 
   app.use('/api/auth', authRoutes);
   app.use('/api/admin', adminRoutes);
+  app.use('/api/stores', storesRoutes);
   app.use('/api', categoriesRoutes);
 
   app.use('/api', notFound);
