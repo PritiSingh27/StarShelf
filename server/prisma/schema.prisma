@@ -1,0 +1,91 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  USER
+  OWNER
+}
+
+enum TokenType {
+  EMAIL_VERIFY
+  PASSWORD_RESET
+}
+
+model User {
+  id               Int         @id @default(autoincrement())
+  name             String      @db.VarChar(60)
+  email            String      @unique
+  passwordHash     String
+  address          String      @db.VarChar(400)
+  role             Role        @default(USER)
+  emailVerified    Boolean     @default(false)
+  tokenVersion     Int         @default(0)
+  failedLoginCount Int         @default(0)
+  lockedUntil      DateTime?
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+  store            Store?
+  ratings          Rating[]
+  tokens           AuthToken[]
+
+  @@index([role])
+}
+
+model Category {
+  id     Int     @id @default(autoincrement())
+  name   String  @unique @db.VarChar(50)
+  slug   String  @unique
+  stores Store[]
+}
+
+model Store {
+  id         Int      @id @default(autoincrement())
+  name       String   @db.VarChar(100)
+  email      String   @unique
+  address    String   @db.VarChar(400)
+  categoryId Int
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  ownerId    Int?     @unique
+  owner      User?    @relation(fields: [ownerId], references: [id])
+  ratings    Rating[]
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([name])
+  @@index([categoryId])
+}
+
+model Rating {
+  id        Int      @id @default(autoincrement())
+  value     Int
+  comment   String?  @db.VarChar(500)
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  storeId   Int
+  store     Store    @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, storeId])
+  @@index([storeId])
+}
+
+model AuthToken {
+  id        Int       @id @default(autoincrement())
+  userId    Int
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      TokenType
+  tokenHash String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([userId])
+}
