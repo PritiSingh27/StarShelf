@@ -1,9 +1,11 @@
 import rateLimit from 'express-rate-limit';
+import { env } from '../../config/env.js';
 
 const createLimiter = (options) =>
   rateLimit({
     standardHeaders: 'draft-7',
     legacyHeaders: false,
+    skip: (req) => env.NODE_ENV === 'test' && !req.headers['x-test-rate-limit'],
     handler: (req, res, _next, options) => {
       const retryAfter = Math.ceil(options.windowMs / 1000);
       res.set('Retry-After', String(retryAfter));
