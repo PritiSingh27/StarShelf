@@ -82,12 +82,43 @@ export const createApp = () => {
   app.use('/api', originCheck);
   app.use('/api', contentTypeCheck);
 
-  app.get('/api/health', (req, res) => {
-    res.json({ status: 'ok' });
+  app.get('/api/health', async (req, res) => {
+    const startTime = Date.now();
+    let dbStatus = 'ok';
+    let dbLatencyMs = 0;
+
+    try {
+      const { prisma } = await import('./db/prisma.js');
+      await prisma.$queryRaw`SELECT 1`;
+      dbLatencyMs = Date.now() - startTime;
+    } catch {
+      dbStatus = 'error';
+    }
+
+    const memory = process.memoryUsage();
+    res.json({
+      status: dbStatus === 'ok' ? 'ok' : 'degraded',
+      uptime: Math.floor(process.uptime()),
+      timestamp: new Date().toISOString(),
+      database: {
+        status: dbStatus,
+        latencyMs: dbLatencyMs,
+      },
+      memory: {
+        heapUsedMb: Math.round(memory.heapUsed / 1024 / 1024),
+        heapTotalMb: Math.round(memory.heapTotal / 1024 / 1024),
+      },
+    });
   });
 
-  app.get('/api/ready', (req, res) => {
-    res.json({ status: 'ok', ready: true });
+  app.get('/api/ready', async (req, res) => {
+    try {
+      const { prisma } = await import('./db/prisma.js');
+      await prisma.$queryRaw`SELECT 1`;
+      res.json({ status: 'ok', ready: true });
+    } catch {
+      res.status(503).json({ status: 'error', ready: false });
+    }
   });
 
   if (env.ENABLE_DOCS || env.NODE_ENV === 'development') {
