@@ -37,6 +37,10 @@ export const createApp = () => {
           req.url === '/api/ready' ||
           req.url.startsWith('/api/docs'),
       },
+      customSuccessMessage: (req, res, responseTime) =>
+        `${req.method} ${req.url} ${res.statusCode} - ${responseTime}ms`,
+      customErrorMessage: (req, res, err) =>
+        `${req.method} ${req.url} ${res.statusCode} - ${err.message}`,
     })
   );
 
