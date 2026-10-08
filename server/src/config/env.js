@@ -7,6 +7,7 @@ const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
   PORT: z.coerce.number().int().positive().default(4000),
   DATABASE_URL: z.string().min(1, 'DATABASE_URL is required'),
+  DIRECT_URL: z.string().optional(),
   DATABASE_URL_TEST: z.string().optional().default('postgresql://postgres:postgres@localhost:5432/starshelf_test?schema=public'),
   JWT_SECRET: z.string().min(32, 'JWT_SECRET must be at least 32 characters long'),
   CLIENT_URL: z.string().min(1, 'CLIENT_URL is required'),
