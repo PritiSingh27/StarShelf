@@ -1,5 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { Toaster } from 'react-hot-toast';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth, getRoleDefaultPath } from './context/AuthContext.jsx';
 import { ThemeProvider } from './context/ThemeContext.jsx';
 import AppShell from './components/layout/AppShell.jsx';
@@ -44,9 +43,7 @@ export default function App() {
   return (
     <ThemeProvider>
       <AuthProvider>
-        <BrowserRouter>
-          <Toaster position="top-right" toastOptions={{ duration: 4000 }} />
-          <Routes>
+        <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
@@ -117,7 +114,6 @@ export default function App() {
 
             <Route path="*" element={<NotFound />} />
           </Routes>
-        </BrowserRouter>
       </AuthProvider>
     </ThemeProvider>
   );
