@@ -3,6 +3,7 @@ import { AuthProvider, useAuth, getRoleDefaultPath } from './context/AuthContext
 import { ThemeProvider } from './context/ThemeContext.jsx';
 import AppShell from './components/layout/AppShell.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
+import PublicOnlyRoute from './components/PublicOnlyRoute.jsx';
 import Skeleton from './components/ui/Skeleton.jsx';
 
 import Login from './pages/Login.jsx';
@@ -44,10 +45,38 @@ export default function App() {
     <ThemeProvider>
       <AuthProvider>
         <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/reset-password" element={<ResetPassword />} />
+            <Route
+              path="/login"
+              element={
+                <PublicOnlyRoute>
+                  <Login />
+                </PublicOnlyRoute>
+              }
+            />
+            <Route
+              path="/signup"
+              element={
+                <PublicOnlyRoute>
+                  <Signup />
+                </PublicOnlyRoute>
+              }
+            />
+            <Route
+              path="/forgot-password"
+              element={
+                <PublicOnlyRoute>
+                  <ForgotPassword />
+                </PublicOnlyRoute>
+              }
+            />
+            <Route
+              path="/reset-password"
+              element={
+                <PublicOnlyRoute>
+                  <ResetPassword />
+                </PublicOnlyRoute>
+              }
+            />
             <Route path="/verify-email" element={<VerifyEmail />} />
 
             <Route

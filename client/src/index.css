@@ -5,35 +5,128 @@
 @tailwind utilities;
 
 :root {
-  --color-bg: #F4F5FB;
-  --color-surface: #FFFFFF;
-  --color-line: #E2E5F1;
-  --color-ink: #12142B;
-  --color-muted: #626A8A;
-  --color-brand: #4F46E5;
-  --color-brand-strong: #4338CA;
-  --color-brand-soft: #EEF0FF;
-  --color-brand-text: #4338CA;
-  --color-star: #F59E0B;
+  --color-page-bg: #E8E1F0;
+  --color-stamp-surface: #FFFEFB;
+  --color-text-ink: #2D1B4E;
+  --color-primary: #6B3FA0;
+  --color-secondary: #E4572E;
+
+  --color-bg: var(--color-page-bg);
+  --color-surface: var(--color-stamp-surface);
+  --color-ink: var(--color-text-ink);
+  --color-muted: color-mix(in srgb, #2D1B4E 60%, transparent);
+  --color-line: color-mix(in srgb, #2D1B4E 20%, transparent);
+  
+  --color-brand: var(--color-primary);
+  --color-brand-strong: #553082;
+  --color-brand-soft: color-mix(in srgb, #6B3FA0 12%, transparent);
+  --color-brand-text: var(--color-primary);
+  --color-star: var(--color-secondary);
   --color-danger: #DC2626;
 }
 
 html.dark {
-  --color-bg: #0B0E19;
-  --color-surface: #131727;
-  --color-line: #232842;
-  --color-ink: #E8EAF6;
-  --color-muted: #9AA1C2;
-  --color-brand: #4F46E5;
-  --color-brand-strong: #6366F1;
-  --color-brand-soft: #1C2142;
-  --color-brand-text: #A5B4FC;
-  --color-star: #FBBF24;
+  --color-page-bg: #150F21;
+  --color-stamp-surface: #21183A;
+  --color-text-ink: #EAE4F5;
+  --color-primary: #A074E0;
+  --color-secondary: #FF7A45;
+
+  --color-bg: var(--color-page-bg);
+  --color-surface: var(--color-stamp-surface);
+  --color-ink: var(--color-text-ink);
+  --color-muted: color-mix(in srgb, #EAE4F5 60%, transparent);
+  --color-line: color-mix(in srgb, #EAE4F5 20%, transparent);
+
+  --color-brand: var(--color-primary);
+  --color-brand-strong: #B38BF5;
+  --color-brand-soft: color-mix(in srgb, #A074E0 15%, transparent);
+  --color-brand-text: var(--color-primary);
+  --color-star: var(--color-secondary);
   --color-danger: #F87171;
 }
 
 @layer base {
   body {
-    font-family: 'Manrope Variable', sans-serif;
+    font-family: 'Josefin Sans', system-ui, sans-serif;
+    background-color: var(--color-bg);
+    color: var(--color-ink);
+    font-size: 14px;
+  }
+
+  h1, h2, h3, h4, .font-serif-heading {
+    font-family: 'Abril Fatface', Georgia, serif;
+  }
+}
+
+.stamp-font-title {
+  font-family: 'Abril Fatface', Georgia, serif;
+}
+
+.stamp-font-body {
+  font-family: 'Josefin Sans', system-ui, sans-serif;
+}
+
+/* Philatelist Real Scalloped Stamp Perforation CSS Mask */
+.stamp-perforated {
+  position: relative;
+  background-color: var(--color-surface);
+  -webkit-mask-image: 
+    radial-gradient(circle 4px at 0% 50%, #0000 99%, #000) 0 0 / 100% 16px repeat-y,
+    radial-gradient(circle 4px at 100% 50%, #0000 99%, #000) 0 0 / 100% 16px repeat-y,
+    radial-gradient(circle 4px at 50% 0%, #0000 99%, #000) 0 0 / 16px 100% repeat-x,
+    radial-gradient(circle 4px at 50% 100%, #0000 99%, #000) 0 0 / 16px 100% repeat-x;
+  -webkit-mask-composite: destination-in, destination-in, destination-in;
+  mask-image: 
+    radial-gradient(circle 4px at 0% 50%, #0000 99%, #000) 0 0 / 100% 16px repeat-y,
+    radial-gradient(circle 4px at 100% 50%, #0000 99%, #000) 0 0 / 100% 16px repeat-y,
+    radial-gradient(circle 4px at 50% 0%, #0000 99%, #000) 0 0 / 16px 100% repeat-x,
+    radial-gradient(circle 4px at 50% 100%, #0000 99%, #000) 0 0 / 16px 100% repeat-x;
+  mask-composite: intersect;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease;
+}
+
+.stamp-hover-lift:hover,
+.stamp-hover-lift:focus-within {
+  transform: translateY(-4px) rotate(0deg) !important;
+  box-shadow: 0 12px 24px -4px rgba(45, 27, 78, 0.2);
+}
+
+/* Postmark Stamp Animation */
+@keyframes postmarkThunk {
+  0% {
+    transform: scale(1.15) rotate(-12deg);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1) rotate(-5deg);
+    opacity: 0.75;
+  }
+}
+
+.animate-thunk {
+  animation: postmarkThunk 250ms cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+/* Focus indicator requirement */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+[role="button"]:focus-visible {
+  outline: 2px solid var(--color-ink) !important;
+  outline-offset: 2px !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stamp-perforated,
+  .stamp-hover-lift {
+    transform: none !important;
+    transition: none !important;
+  }
+  .animate-thunk {
+    animation: none !important;
+    transform: scale(1) rotate(-5deg);
+    opacity: 0.75;
   }
 }

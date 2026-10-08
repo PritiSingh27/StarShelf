@@ -47,11 +47,11 @@ StarShelf is a multi-role store rating and review web application built using Ja
 * **Raters Table:** Paginated table listing users who rated the store, including their star values, written comments, and timestamps.
 * **Unassigned State:** Clear notice when a store owner account does not have an assigned store.
 
-### 4. Cross-Cutting & Security Features
-* **Theme Support:** Flash-free Light, Dark, and System theme persistence.
-* **Editable Profiles:** Update profile details and change passwords securely (invalidates prior tokens via `tokenVersion`).
-* **OpenAPI Docs:** Full Swagger interactive documentation available at `/api/docs`.
-* **Containerization:** Multi-stage Docker build with Nginx reverse proxy SPA routing and Docker Compose environment.
+### 5. Philatelist "Postage Stamp" Visual Theme
+* **Real 4-Edge Perforations:** Computed via CSS `mask-image` repeating 4px radial-gradients along top, bottom, left, and right edges using `destination-in` / `intersect` composition so true 8px scalloped notches allow album page background colors (`#E8E1F0` light, `#150F21` dark) to show through.
+* **Circular Postmark Overlay:** Built as an inline SVG displaying neighbourhood text on a curved SVG `<path>` (`<textPath>`), dashed double rings, and 3-line wavy cancellation lines rendered at 70% opacity in secondary accent color.
+* **Interactive Stamp Collecting:** Collecting a stamp triggers a 250ms "thunk" stamp animation (`animate-thunk`).
+* **Typography:** `Abril Fatface` for store names and large stamp denomination numerals, and `Josefin Sans` for UI elements and small caps spaced neighbourhood labels.
 
 ---
 
