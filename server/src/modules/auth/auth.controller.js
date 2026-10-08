@@ -5,7 +5,7 @@ export const register = async (req, res, next) => {
   try {
     const result = await authService.registerUser(req.body);
     res.cookie('token', result.jwtToken, getAuthCookieOptions());
-    res.status(201).json(result.user);
+    res.status(201).json({ ...result.user, token: result.jwtToken });
   } catch (error) {
     next(error);
   }
@@ -15,7 +15,7 @@ export const login = async (req, res, next) => {
   try {
     const result = await authService.loginUser(req.body);
     res.cookie('token', result.jwtToken, getAuthCookieOptions());
-    res.json(result.user);
+    res.json({ ...result.user, token: result.jwtToken });
   } catch (error) {
     next(error);
   }

@@ -38,6 +38,9 @@ export function AuthProvider({ children }) {
   }, []);
 
   const loginUser = (userData) => {
+    if (userData?.token) {
+      localStorage.setItem('token', userData.token);
+    }
     setUser(userData);
   };
 
@@ -47,6 +50,7 @@ export function AuthProvider({ children }) {
     } catch {
       // Logout clear local state regardless
     } finally {
+      localStorage.removeItem('token');
       setUser(null);
     }
   };
