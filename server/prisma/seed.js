@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
+import crypto from 'node:crypto';
 
 const prisma = new PrismaClient();
 
@@ -10,9 +11,9 @@ async function main() {
   await prisma.category.deleteMany();
   await prisma.user.deleteMany();
 
-  const passwordHash = await bcrypt.hash('Admin@12345', 10);
-  const ownerPasswordHash = await bcrypt.hash('Owner@12345', 10);
-  const userPasswordHash = await bcrypt.hash('User@12345', 10);
+  const adminPasswordHash = await bcrypt.hash('Admin@123', 10);
+  const ownerPasswordHash = await bcrypt.hash('Owner@123', 10);
+  const userPasswordHash = await bcrypt.hash('User@123', 10);
 
   const categoriesData = [
     { name: 'Cafe', slug: 'cafe' },
@@ -31,12 +32,23 @@ async function main() {
     categories[cat.slug] = created;
   }
 
-  await prisma.user.create({
+  const admin1 = await prisma.user.create({
     data: {
       name: 'System Administrator Account',
       email: 'admin@starshelf.com',
-      passwordHash,
+      passwordHash: adminPasswordHash,
       address: '100 Admin Plaza, Headquarters Suite 500, New York, NY 10001',
+      role: 'ADMIN',
+      emailVerified: true,
+    },
+  });
+
+  await prisma.user.create({
+    data: {
+      name: 'Secondary Admin Administrator',
+      email: 'admin2@starshelf.com',
+      passwordHash: adminPasswordHash,
+      address: '200 Executive Parkway, Suite 10, San Francisco, CA 94105',
       role: 'ADMIN',
       emailVerified: true,
     },
@@ -45,7 +57,7 @@ async function main() {
   const owner1 = await prisma.user.create({
     data: {
       name: 'Store Owner Alice Smith',
-      email: 'owner1@starshelf.com',
+      email: 'owner@starshelf.com',
       passwordHash: ownerPasswordHash,
       address: '123 Baker Street, Downtown District, Seattle, WA 98101',
       role: 'OWNER',
@@ -78,7 +90,7 @@ async function main() {
   const usersData = [
     {
       name: 'Regular Customer David Miller',
-      email: 'user1@starshelf.com',
+      email: 'user@starshelf.com',
       address: '12 Elm Street, Apartment 4B, Boston, MA 02108',
     },
     {
@@ -197,8 +209,30 @@ async function main() {
     await prisma.rating.create({ data: r });
   }
 
+  const sampleRawToken1 = 'seed_verify_token_123';
+  const tokenHash1 = crypto.createHash('sha256').update(sampleRawToken1).digest('hex');
+  await prisma.authToken.create({
+    data: {
+      userId: users[0].id,
+      type: 'EMAIL_VERIFY',
+      tokenHash: tokenHash1,
+      expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
+    },
+  });
+
+  const sampleRawToken2 = 'seed_reset_token_456';
+  const tokenHash2 = crypto.createHash('sha256').update(sampleRawToken2).digest('hex');
+  await prisma.authToken.create({
+    data: {
+      userId: admin1.id,
+      type: 'PASSWORD_RESET',
+      tokenHash: tokenHash2,
+      expiresAt: new Date(Date.now() + 60 * 60 * 1000),
+    },
+  });
+
   // eslint-disable-next-line no-console
-  console.log('Seed completed successfully');
+  console.log('Seed completed successfully for all database schemas (User, Category, Store, Rating, AuthToken)');
 }
 
 main()
